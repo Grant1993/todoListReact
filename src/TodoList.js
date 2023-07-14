@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Todo from "./Todo";
 import NewTodoForm from "./NewTodoForm";
 import "./TodoList.css";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
 
 function TodoList() {
   const [state, setState] = useState({
@@ -45,22 +46,27 @@ function TodoList() {
   }
   const todos = state.todos.map((todo) => {
     return (
-      <Todo
-        key={todo.id}
-        id={todo.id}
-        task={todo.task}
-        completed={todo.completed}
-        removeTodo={remove}
-        updatedTodo={update}
-        toggleTodo={toggleCompletion}
-      />
+      <CSSTransition key={todo.id} timeout={500} classNames='todo'>
+        <Todo
+          key={todo.id}
+          id={todo.id}
+          task={todo.task}
+          completed={todo.completed}
+          removeTodo={remove}
+          updateTodo={update}
+          toggleTodo={toggleCompletion}
+        />
+      </CSSTransition>
     );
   });
   return (
     <div className='TodoList'>
-      <h1>Todo List</h1>
-      <ul>{todos}</ul>
+      <h1>To do list!</h1>
       <NewTodoForm createTodo={create} />
+
+      <ul>
+        <TransitionGroup className='todo-list'>{todos}</TransitionGroup>
+      </ul>
     </div>
   );
 }

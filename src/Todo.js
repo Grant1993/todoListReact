@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "./Todo.css";
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import { FaPencilAlt, FaTrashAlt } from "react-icons/fa";
 
 function Todo(props) {
   const [state, setState] = useState({
@@ -14,7 +16,7 @@ function Todo(props) {
   }
   function handleUpdate(evt) {
     evt.preventDefault();
-    props.updatedTodo(props.id, state.task);
+    props.updateTodo(props.id, state.task);
     setState((prev) => ({ ...prev, isEditing: false }));
   }
   function handleChange(evt) {
@@ -30,7 +32,7 @@ function Todo(props) {
   let result;
   if (state.isEditing) {
     result = (
-      <div className='Todo'>
+      <CSSTransition key='editing' timeout={500} classNames='form'>
         <form className='Todo-edit-form' onSubmit={handleUpdate}>
           <input
             type='text'
@@ -40,29 +42,30 @@ function Todo(props) {
           />
           <button>Save</button>
         </form>
-      </div>
+      </CSSTransition>
     );
   } else {
     result = (
-      <div className='Todo'>
-        <li
-          className={props.completed ? "Todo-task completed" : "Todo-task"}
-          onClick={handleToggle}
-        >
+      <CSSTransition key='normal' timeout={500} classNames='task-text'>
+        <li className='Todo-task' onClick={handleToggle}>
           {props.task}
         </li>
-        <div className='Todo-buttons'>
-          <button onClick={toggleForm}>
-            <i class='fas fa-pen' />
-          </button>
-          <button onClick={handleRemove}>
-            <i class='fas fa-trash' />
-          </button>
-        </div>
-      </div>
+      </CSSTransition>
     );
   }
-  return result;
+  return (
+    <TransitionGroup className={props.completed ? "Todo completed" : "Todo"}>
+      {result}
+      <div className='Todo-buttons'>
+        <button onClick={toggleForm}>
+          <FaPencilAlt />
+        </button>
+        <button onClick={handleRemove}>
+          <FaTrashAlt />
+        </button>
+      </div>
+    </TransitionGroup>
+  );
 }
 
 export default Todo;
